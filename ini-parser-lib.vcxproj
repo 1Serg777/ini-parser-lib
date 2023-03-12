@@ -152,6 +152,7 @@
     <ClCompile Include="src\IniParser\Ini.cpp" />
     <ClCompile Include="src\IniParser\IniParser.cpp" />
     <ClCompile Include="src\IniParser\IniScanner.cpp" />
+    <ClCompile Include="src\IniParser\IniWriter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\IniParser\IniError.h" />
@@ -159,6 +160,7 @@
     <ClInclude Include="include\IniParser\IniParser.h" />
     <ClInclude Include="include\IniParser\IniParserApi.h" />
     <ClInclude Include="include\IniParser\IniScanner.h" />
+    <ClInclude Include="include\IniParser\IniWriter.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
