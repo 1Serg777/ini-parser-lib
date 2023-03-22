@@ -23,17 +23,17 @@ namespace inip
 
 	// Helper functions
 
-	std::string IniOptionTypeToString(IniOptionType optionType);
+	INI_PARSER_API std::string IniOptionTypeToString(IniOptionType optionType);
 
 	template <typename T>
-	std::string Stringify(const T& value)
+	INI_PARSER_API std::string Stringify(const T& value)
 	{
 		std::stringstream sstream{};
 		sstream << value;
 		return sstream.str();
 	}
 	template <> inline
-	std::string Stringify<std::string>(const std::string& value)
+	INI_PARSER_API std::string Stringify<std::string>(const std::string& value)
 	{
 		return value;
 	}
