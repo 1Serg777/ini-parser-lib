@@ -239,7 +239,7 @@ namespace inip
 
 	// Ini Settings printer?
 
-	class IniSettingsPrinter
+	class IniSettingsWriter
 	{
 	public:
 		INI_PARSER_API static void PrintIniSettings(std::ostream& outputStream, std::shared_ptr<IniSettings> iniSettings);

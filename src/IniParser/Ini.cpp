@@ -98,7 +98,7 @@ namespace inip
 
 	// Ini Settings Printer
 
-	void IniSettingsPrinter::PrintIniSettings(std::ostream& outputStream, std::shared_ptr<IniSettings> iniSettings)
+	void IniSettingsWriter::PrintIniSettings(std::ostream& outputStream, std::shared_ptr<IniSettings> iniSettings)
 	{
 		for (const auto& group : iniSettings->GetSettingsGroups())
 		{
@@ -106,7 +106,7 @@ namespace inip
 			outputStream << "\n";
 		}
 	}
-	void IniSettingsPrinter::PrintIniGroup(std::ostream& outputStream, std::shared_ptr<IniGroup> iniGroup)
+	void IniSettingsWriter::PrintIniGroup(std::ostream& outputStream, std::shared_ptr<IniGroup> iniGroup)
 	{
 		outputStream << "[" << iniGroup->GetGroupName() << "]\n";
 		for (const auto& option : iniGroup->GetGroupOptions())
@@ -114,7 +114,7 @@ namespace inip
 			PrintIniOption(outputStream, option);
 		}
 	}
-	void IniSettingsPrinter::PrintIniOption(std::ostream& outputStream, std::shared_ptr<IniOption> iniOption)
+	void IniSettingsWriter::PrintIniOption(std::ostream& outputStream, std::shared_ptr<IniOption> iniOption)
 	{
 		outputStream << iniOption->GetKey() << " = ";
 
