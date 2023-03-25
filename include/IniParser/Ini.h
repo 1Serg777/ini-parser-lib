@@ -46,7 +46,7 @@ namespace inip
 		return value;
 	}
 
-	std::string IniOptionTypeToString(IniOptionType optionType);
+	INI_PARSER_API std::string IniOptionTypeToString(IniOptionType optionType);
 
 	// Ini Option
 
