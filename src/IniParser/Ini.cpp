@@ -2,51 +2,6 @@
 
 namespace inip
 {
-	// Helper functions
-
-	//template <>
-	//std::string Stringify<std::string>(const std::string& value)
-	//{
-	//	return value;
-	//}
-
-	std::string IniOptionTypeToString(IniOptionType optionType)
-	{
-		switch (optionType)
-		{
-		case IniOptionType::STRING:
-			return "STRING";
-			break;
-		case IniOptionType::INTEGER:
-			return "INTEGER";
-			break;
-		case IniOptionType::FLOAT:
-			return "FLOAT";
-			break;
-		}
-		return "UNDEFINED";
-	}
-
-	// Ini Option
-
-	IniOption::IniOption(
-		const std::string& key,
-		const std::string& value,
-		IniOptionType optionType)
-		: key(key), value(value), optionType(optionType)
-	{
-	}
-
-	const std::string& IniOption::GetKey() const
-	{
-		return key;
-	}
-
-	IniOptionType IniOption::GetOptionType() const
-	{
-		return optionType;
-	}
-
 	// Ini Group
 
 	IniGroup::IniGroup(const std::string& iniGroupName)

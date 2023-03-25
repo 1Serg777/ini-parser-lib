@@ -83,7 +83,7 @@ namespace inip
 
 		if (file.fail())
 		{
-			throw std::ifstream::failure{ "I/O runtime error was thrown openning a shader file!" };
+			throw std::ifstream::failure{ "I/O runtime error while openning a file!" };
 		}
 
 		std::ostringstream ostream{};
@@ -154,16 +154,16 @@ namespace inip
 		switch (value.type)
 		{
 		case TokenType::STRING:
-			iniOption = std::make_shared<IniOption>(optionKey.literal, value.value, IniOptionType::STRING);
+			iniOption = std::make_shared<IniOption>(optionKey.literal, value.value);
 			break;
 		case TokenType::INTEGER:
-			iniOption = std::make_shared<IniOption>(optionKey.literal, value.literal, IniOptionType::INTEGER);
+			iniOption = std::make_shared<IniOption>(optionKey.literal, value.literal);
 			break;
 		case TokenType::FLOAT:
-			iniOption = std::make_shared<IniOption>(optionKey.literal, value.literal, IniOptionType::FLOAT);
+			iniOption = std::make_shared<IniOption>(optionKey.literal, value.literal);
 			break;
 		case TokenType::IDENTIFIER:
-			iniOption = std::make_shared<IniOption>(optionKey.literal, value.literal, IniOptionType::STRING);
+			iniOption = std::make_shared<IniOption>(optionKey.literal, value.literal);
 			break;
 		default:
 			throw IniParserError(Peek(), "Unexpected 'value' token! Must be either STRING, INTEGER, FLOAT or IDENTIFIER!");

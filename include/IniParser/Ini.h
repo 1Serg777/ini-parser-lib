@@ -14,32 +14,31 @@
 
 namespace inip
 {
-	enum class IniOptionType
-	{
-		STRING,
-		INTEGER,
-		FLOAT
-	};
+	class IniOption;
+	class IniGroup;
+	class IniSettings;
 
 	// Helper functions
 
-	INI_PARSER_API std::string IniOptionTypeToString(IniOptionType optionType);
-
-	template <typename T>
-	INI_PARSER_API std::string Stringify(const T& value)
+	template <
+		typename T,
+		std::enable_if_t<std::is_integral_v<T> || std::is_floating_point_v<T>, bool> = true>
+	std::string Stringify(const T& value)
 	{
-		std::stringstream sstream{};
+		std::stringstream sstream;
 		sstream << value;
 		return sstream.str();
 	}
-	template <> inline
-	INI_PARSER_API std::string Stringify<std::string>(const std::string& value)
+
+	template <
+		typename T,
+		std::enable_if_t<
+			std::is_same_v<std::remove_cv_t<std::remove_reference_t<T>>, std::string>,
+			bool> = true>
+	std::string Stringify(const std::string& value)
 	{
 		return value;
 	}
-
-	//template <>
-	//std::string Stringify<std::string>(const std::string& value);
 
 	// Ini Option
 
@@ -49,53 +48,90 @@ namespace inip
 
 		INI_PARSER_API IniOption(
 			const std::string& key,
-			const std::string& value,
-			IniOptionType optionType);
+			const std::string& value)
+			: key(key), value(value) {}
 
-		INI_PARSER_API const std::string& GetKey() const;
+		INI_PARSER_API const std::string& GetKey() const
+		{
+			return key;
+		}
 
-		template <typename T>
+		template <
+			typename T,
+			std::enable_if_t<std::is_integral_v<T>, bool> = true>
 		T GetValue() const
 		{
 			T val{};
 			try
 			{
-				switch (optionType)
-				{
-				case IniOptionType::INTEGER:
-					val = static_cast<T>(std::stoi(value));
-					break;
-				case IniOptionType::FLOAT:
-					val = static_cast<T>(std::stof(value));
-					break;
-				}
+				val = static_cast<T>(std::stoll(value));
 			}
 			catch (std::invalid_argument iae)
 			{
-				throw IniSettingValueCastError(
-					key, value, IniOptionTypeToString(optionType));
+				throw IniSettingValueCastError(key, value, "INTEGER");
 			}
 			catch (std::out_of_range oore)
 			{
-				throw IniSettingValueCastError(
-					key, value, IniOptionTypeToString(optionType));
+				throw IniSettingValueCastError(key, value, "INTEGER");
 			}
 			return val;
 		}
-		template <>
-		std::string GetValue<std::string>() const
+		
+		template <
+			typename T,
+			std::enable_if_t<std::is_floating_point_v<T>, bool> = true>
+		T GetValue() const
+		{
+			T val{};
+			try
+			{
+				val = static_cast<T>(std::stold(value));
+			}
+			catch (std::invalid_argument iae)
+			{
+				throw IniSettingValueCastError(key, value, "FLOAT");
+			}
+			catch (std::out_of_range oore)
+			{
+				throw IniSettingValueCastError(key, value, "FLOAT");
+			}
+			return val;
+		}
+		
+		template <
+			typename T,
+			std::enable_if_t<
+				std::is_same_v<std::remove_cv_t<std::remove_reference_t<T>>, std::string>,
+				bool> = true>
+		T GetValue() const
 		{
 			return value;
 		}
 
-		INI_PARSER_API IniOptionType GetOptionType() const;
+		template <
+			typename T,
+			std::enable_if_t<std::is_integral_v<T> || std::is_floating_point_v<T>, bool> = true>
+		void SetValue(const T& numericValue)
+		{
+			std::stringstream ostream;
+			ostream << numericValue;
+			this->value = ostream.str();
+		}
+		
+		template <
+			typename T,
+			std::enable_if_t<
+				std::is_same_v<std::remove_cv_t<std::remove_reference_t<T>>, std::string>,
+				bool> = true>
+		void SetValue(const std::string& strValue)
+		{
+			this->value = strValue;
+		}
 
 	private:
 
 		std::string key;
 		std::string value;
-
-		IniOptionType optionType{};
 	};
 
 	// Ini Group
@@ -109,13 +145,7 @@ namespace inip
 		template <typename T>
 		void AddOption(const std::string& key, const T& value)
 		{
-			std::shared_ptr<IniOption> option;
-			if (std::is_integral_v<T>)
-				option = std::make_shared<IniOption>(key, Stringify(value), IniOptionType::INTEGER);
-			else if (std::is_floating_point_v<T>)
-				option = std::make_shared<IniOption>(key, Stringify(value), IniOptionType::FLOAT);
-			else
-				option = std::make_shared<IniOption>(key, Stringify(value), IniOptionType::STRING);
+			std::shared_ptr<IniOption> option = std::make_shared<IniOption>(key, Stringify(value));
 			AddOption(option);
 		}
 		INI_PARSER_API void AddOption(std::shared_ptr<IniOption> option);
