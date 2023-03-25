@@ -154,16 +154,16 @@ namespace inip
 		switch (value.type)
 		{
 		case TokenType::STRING:
-			iniOption = std::make_shared<IniOption>(optionKey.literal, value.value);
+			iniOption = std::make_shared<IniOption>(optionKey.literal, value.value, IniOptionType::STRING);
 			break;
 		case TokenType::INTEGER:
-			iniOption = std::make_shared<IniOption>(optionKey.literal, value.literal);
+			iniOption = std::make_shared<IniOption>(optionKey.literal, value.literal, IniOptionType::INTEGER);
 			break;
 		case TokenType::FLOAT:
-			iniOption = std::make_shared<IniOption>(optionKey.literal, value.literal);
+			iniOption = std::make_shared<IniOption>(optionKey.literal, value.literal, IniOptionType::FLOAT);
 			break;
 		case TokenType::IDENTIFIER:
-			iniOption = std::make_shared<IniOption>(optionKey.literal, value.literal);
+			iniOption = std::make_shared<IniOption>(optionKey.literal, value.literal, IniOptionType::STRING);
 			break;
 		default:
 			throw IniParserError(Peek(), "Unexpected 'value' token! Must be either STRING, INTEGER, FLOAT or IDENTIFIER!");

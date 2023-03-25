@@ -14,6 +14,12 @@
 
 namespace inip
 {
+	enum IniOptionType
+	{
+		UNIDENITIFIED,
+		STRING, INTEGER, FLOAT
+	};
+
 	class IniOption;
 	class IniGroup;
 	class IniSettings;
@@ -40,16 +46,40 @@ namespace inip
 		return value;
 	}
 
+	std::string IniOptionTypeToString(IniOptionType optionType);
+
 	// Ini Option
 
 	class IniOption
 	{
 	public:
 
+		INI_PARSER_API IniOption(const std::string& key)
+			: key(key) {}
+
 		INI_PARSER_API IniOption(
 			const std::string& key,
-			const std::string& value)
-			: key(key), value(value) {}
+			const std::string& value,
+			IniOptionType optionType)
+			: key(key), value(value), optionType(optionType) {}
+
+		template<
+			typename T,
+			std::enable_if_t<std::is_integral_v<T>, bool> = true>
+		IniOption(const std::string& key, const T& value)
+			: key(key), value(Stringify(value)), optionType(IniOptionType::INTEGER) {}
+
+		template<
+			typename T,
+			std::enable_if_t<std::is_floating_point_v<T>, bool> = true>
+		IniOption(const std::string& key, const T& value)
+			: key(key), value(Stringify(value)), optionType(IniOptionType::FLOAT) {}
+
+		template<
+			typename T,
+			std::enable_if_t<std::is_same_v<std::remove_cv_t<std::remove_reference_t<T>>, std::string>, bool> = true>
+		IniOption(const std::string& key, const T& value)
+			: key(key), value(value), optionType(IniOptionType::STRING) {}
 
 		INI_PARSER_API const std::string& GetKey() const
 		{
@@ -68,11 +98,11 @@ namespace inip
 			}
 			catch (std::invalid_argument iae)
 			{
-				throw IniSettingValueCastError(key, value, "INTEGER");
+				throw IniSettingValueCastError(key, value, IniOptionTypeToString(optionType));
 			}
 			catch (std::out_of_range oore)
 			{
-				throw IniSettingValueCastError(key, value, "INTEGER");
+				throw IniSettingValueCastError(key, value, IniOptionTypeToString(optionType));
 			}
 			return val;
 		}
@@ -89,11 +119,11 @@ namespace inip
 			}
 			catch (std::invalid_argument iae)
 			{
-				throw IniSettingValueCastError(key, value, "FLOAT");
+				throw IniSettingValueCastError(key, value, IniOptionTypeToString(optionType));
 			}
 			catch (std::out_of_range oore)
 			{
-				throw IniSettingValueCastError(key, value, "FLOAT");
+				throw IniSettingValueCastError(key, value, IniOptionTypeToString(optionType));
 			}
 			return val;
 		}
@@ -113,6 +143,11 @@ namespace inip
 			std::enable_if_t<std::is_integral_v<T> || std::is_floating_point_v<T>, bool> = true>
 		void SetValue(const T& numericValue)
 		{
+			if (std::is_integral_v<T>)
+				optionType = IniOptionType::INTEGER;
+			else if (std::is_floating_point_v<T>)
+				optionType = IniOptionType::FLOAT;
+
 			std::stringstream ostream;
 			ostream << numericValue;
 			this->value = ostream.str();
@@ -125,13 +160,21 @@ namespace inip
 				bool> = true>
 		void SetValue(const std::string& strValue)
 		{
+			optionType = IniOptionType::STRING;
 			this->value = strValue;
+		}
+
+		INI_PARSER_API IniOptionType GetOptionType() const
+		{
+			return optionType;
 		}
 
 	private:
 
 		std::string key;
 		std::string value;
+
+		IniOptionType optionType{ IniOptionType::UNIDENITIFIED };
 	};
 
 	// Ini Group

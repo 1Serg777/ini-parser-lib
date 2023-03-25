@@ -2,6 +2,25 @@
 
 namespace inip
 {
+	// Helper functions
+
+	std::string IniOptionTypeToString(IniOptionType optionType)
+	{
+		switch (optionType)
+		{
+		case IniOptionType::INTEGER:
+			return "INTEGER";
+			break;
+		case IniOptionType::FLOAT:
+			return "FLOAT";
+			break;
+		case IniOptionType::STRING:
+			return "STRING";
+			break;
+		}
+		return "UNIDENTIFIED";
+	}
+
 	// Ini Group
 
 	IniGroup::IniGroup(const std::string& iniGroupName)
@@ -81,11 +100,10 @@ namespace inip
 
 	void IniSettingsPrinter::PrintIniSettings(std::ostream& outputStream, std::shared_ptr<IniSettings> iniSettings)
 	{
-		outputStream << "Settings: " << iniSettings->GetIniSettingsName() << "\n\n";
 		for (const auto& group : iniSettings->GetSettingsGroups())
 		{
 			PrintIniGroup(outputStream, group);
-			std::cout << "\n";
+			outputStream << "\n";
 		}
 	}
 	void IniSettingsPrinter::PrintIniGroup(std::ostream& outputStream, std::shared_ptr<IniGroup> iniGroup)
@@ -98,6 +116,15 @@ namespace inip
 	}
 	void IniSettingsPrinter::PrintIniOption(std::ostream& outputStream, std::shared_ptr<IniOption> iniOption)
 	{
-		outputStream << iniOption->GetKey() << " = " << iniOption->GetValue<std::string>() << "\n";
+		outputStream << iniOption->GetKey() << " = ";
+
+		if (iniOption->GetOptionType() == IniOptionType::STRING)
+		{
+			outputStream << "\"" << iniOption->GetValue<std::string>() << "\"" << "\n";
+		}
+		else
+		{
+			outputStream << iniOption->GetValue<std::string>() << "\n";
+		}
 	}
 }
