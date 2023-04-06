@@ -16,7 +16,7 @@ namespace inip
 {
 	enum IniOptionType
 	{
-		UNIDENITIFIED,
+		UNIDENTIFIED,
 		STRING, INTEGER, FLOAT
 	};
 
@@ -56,6 +56,8 @@ namespace inip
 
 		INI_PARSER_API IniOption(const std::string& key)
 			: key(key) {}
+		INI_PARSER_API IniOption(const std::string& key, IniOptionType optionType)
+			: key(key), optionType(optionType) {}
 
 		INI_PARSER_API IniOption(
 			const std::string& key,
@@ -174,7 +176,7 @@ namespace inip
 		std::string key;
 		std::string value;
 
-		IniOptionType optionType{ IniOptionType::UNIDENITIFIED };
+		IniOptionType optionType{ IniOptionType::UNIDENTIFIED };
 	};
 
 	// Ini Group
